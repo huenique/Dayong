@@ -1,6 +1,6 @@
 {
   "guild_id": 790101969413865472,
-  "bot_prefix": ".",
+  "bot_prefix": "-",
   "imap_domain_name": "imap.gmail.com",
   "embeddings": {
     "new_member_greetings": {
