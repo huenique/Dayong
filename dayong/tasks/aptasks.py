@@ -6,6 +6,7 @@ import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord import TextChannel
 from loguru import logger
+from pragmail.exceptions import IMAP4Error
 from sqlalchemy.exc import NoResultFound
 
 from dayong.core.configs import DayongDynamicLoader
@@ -80,7 +81,7 @@ async def get_devto_article():
         logger.info(f"{task} is not scheduled to run")
         return
 
-    content = await rest.get_devto_article(sort_by_date=True)
+    content = await rest.get_devto_article()
     channel = await get_guild_channel(result.channel_name)
 
     if not isinstance(channel, TextChannel):
@@ -118,7 +119,13 @@ async def get_medium_daily_digest():
         await del_schedule(table_model)
         return
 
-    content = await email.get_medium_daily_digest()
+    try:
+        content = await email.get_medium_daily_digest()
+    except IMAP4Error:
+        email = EmailClient(
+            CONFIG.imap_domain_name, CONFIG.email, CONFIG.email_password
+        )
+        content = await email.get_medium_daily_digest()
 
     logger.info(
         f"{get_medium_daily_digest.__name__} "
@@ -134,10 +141,8 @@ async def get_medium_daily_digest():
 async def on_ready():
     await check_email_cred()
     scheduler = AsyncIOScheduler()
-    # scheduler.add_job(get_devto_article, "cron", hour=1)
-    # scheduler.add_job(get_medium_daily_digest, "cron", hour=1)
-    scheduler.add_job(get_devto_article, "interval", hours=1)
-    scheduler.add_job(get_medium_daily_digest, "interval", hours=1)
+    scheduler.add_job(get_devto_article, "interval", hours=24)
+    scheduler.add_job(get_medium_daily_digest, "interval", hours=24)
     scheduler.start()
 
 
