@@ -69,6 +69,8 @@ async def check_email_cred():
 
 @logger.catch
 async def get_devto_article():
+    global job_running
+
     task = get_devto_article.__name__
 
     try:
@@ -90,6 +92,7 @@ async def get_devto_article():
     logger.info(
         f"{get_devto_article.__name__} delivering content to: {result.channel_name}"
     )
+
     for content in content.content:
         await channel.send(content)
         await asyncio.sleep(60)
@@ -97,6 +100,8 @@ async def get_devto_article():
 
 @logger.catch
 async def get_medium_daily_digest():
+    global email, job_running
+
     task = get_devto_article.__name__
     notsched = f"{task} is not scheduled to run"
     xsession = f"{task} cannot run. reason: no session started.\n```{info}```"
@@ -131,6 +136,7 @@ async def get_medium_daily_digest():
         f"{get_medium_daily_digest.__name__} "
         "delivering content to: {result.channel_name}"
     )
+
     for content in content.content:
         await channel.send(content)
         await asyncio.sleep(60)
