@@ -172,8 +172,8 @@ async def get_medium_daily_digest():
 async def on_ready():
     await check_email_cred()
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(get_devto_article, "cron", hour=0)
-    scheduler.add_job(get_medium_daily_digest, "cron", hour=0)
+    scheduler.add_job(get_devto_article, "cron", hour=16)
+    scheduler.add_job(get_medium_daily_digest, "cron", hour=16)
     scheduler.start()
 
 
