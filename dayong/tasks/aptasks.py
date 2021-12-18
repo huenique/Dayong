@@ -107,7 +107,7 @@ async def get_devto_article():
         logger.info(f"{task} is not scheduled to run")
         return
 
-    content = await rest.get_devto_article()
+    content = await rest.get_devto_article(sort_by_date=True)
     channel = await get_guild_channel(result.channel_name)
 
     if not isinstance(channel, TextChannel):
